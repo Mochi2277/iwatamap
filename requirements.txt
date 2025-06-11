@@ -1,7 +1,5 @@
 streamlit
 pandas
-torch==2.1.2
 streamlit-folium
-sentence-transformers
 torch
 scikit-learn
