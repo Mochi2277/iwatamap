@@ -18,8 +18,31 @@ else:
     results = df.head(5)
 
 # --- 検索結果のテーブル表示 ---
-st.subheader("🔍 検索結果")
-st.dataframe(results[["place_name", "description", "formatted_address", "rating", "user_ratings_total"]])
+# 結果表示（マイマップ風のカード型）
+st.subheader("おすすめスポット")
+st.markdown("""
+<style>
+.card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    background-color: #f9f9f9;
+}
+</style>
+""", unsafe_allow_html=True)
+
+for _, row in results.iterrows():
+    st.markdown(f"""
+<div class="card">
+    <h4>{row['place_name']}</h4>
+    <p><strong>評価:</strong> ⭐️ {row['rating']}（{row['user_ratings_total']}件）</p>
+    <p><strong>説明:</strong> {row['description']}</p>
+    <p><strong>住所:</strong> {row['formatted_address']}</p>
+    <a href="{row['google_map_url']}" target="_blank">📍 Googleマップで開く</a>
+</div>
+""", unsafe_allow_html=True)
+
 
 # --- Foliumで検索結果だけの地図を表示 ---
 st.subheader("🗺 結果スポットのミニマップ（検索結果のみ）")
@@ -30,6 +53,7 @@ for _, row in results.iterrows():
         popup=f"<b>{row['place_name']}</b><br>{row['description']}",
         tooltip=row["place_name"],
     ).add_to(m)
+
 st_folium(m, width=700, height=500)
 
 # --- Googleマイマップ埋め込み（全体ビュー） ---
