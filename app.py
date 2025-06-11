@@ -9,7 +9,7 @@ df = pd.read_csv("iwata_recommend.csv")
 df["description"] = df["description"].fillna("")
 
 # --- モデル読み込み（日本語BERTモデル） ---
-model = SentenceTransformer("cl-tohoku/bert-base-japanese-whole-word-masking")
+model = SentenceTransformer("sonoisa/sentence-bert-base-ja-mean-tokens")
 
 # --- 事前に文ベクトルを計算（重いのでキャッシュ） ---
 @st.cache_resource
