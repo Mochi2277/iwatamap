@@ -5,14 +5,12 @@ from streamlit_folium import st_folium
 from sentence_transformers import SentenceTransformer, util
 import torch
 
-device = "cpu"  # 強制的にCPUモード
-
 # --- データ読み込み ---
 df = pd.read_csv("iwata_recommend.csv")
 df["description"] = df["description"].fillna("")
 
 # --- モデル読み込み（日本語BERTモデル） ---
-model = SentenceTransformer("sonoisa/sentence-bert-base-ja-mean-tokens", device=torch.device(device))
+model = SentenceTransformer("sonoisa/sentence-bert-base-ja-mean-tokens")
 
 # --- 事前に文ベクトルを計算（重いのでキャッシュ） ---
 @st.cache_resource
