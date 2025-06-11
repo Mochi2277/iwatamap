@@ -3,7 +3,6 @@ import pandas as pd
 import folium
 from streamlit_folium import st_folium
 from sentence_transformers import SentenceTransformer, util
-import torch
 
 # --- データ読み込み ---
 df = pd.read_csv("iwata_recommend.csv")
