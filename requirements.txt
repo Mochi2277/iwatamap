@@ -1,4 +1,6 @@
 streamlit
 pandas
-folium
-streamlit-folium 
+numpy
+scikit-learn
+sentence-transformers
+bertopic
