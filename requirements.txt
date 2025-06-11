@@ -1,7 +1,6 @@
 streamlit
 pandas
-numpy
 folium
 streamlit-folium
 sentence-transformers
-scikit-learn
+torch  # sentence-transformersの依存
