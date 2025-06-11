@@ -1,6 +1,5 @@
 streamlit
 pandas
 streamlit-folium
-torch
 scikit-learn
 gensim
