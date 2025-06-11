@@ -1,6 +1,6 @@
 streamlit
 pandas
 numpy
-scikit-learn
+folium
 sentence-transformers
-bertopic
+scikit-learn
