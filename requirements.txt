@@ -2,4 +2,4 @@ streamlit
 pandas
 streamlit-folium
 scikit-learn
-gensim
+gensim==4.3.2
