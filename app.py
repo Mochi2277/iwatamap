@@ -2,27 +2,33 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer, util
 
-# データ読み込み
+# --- データ読み込み ---
 df = pd.read_csv("iwata_recommend.csv")
+df["description"] = df["description"].fillna("")
 
-# 入力
-query = st.text_input("どんな気分ですか？（例：レトロなカフェ・のんびりしたい）")
+# --- モデル読み込み（日本語BERTモデル） ---
+model = SentenceTransformer("cl-tohoku/bert-base-japanese-whole-word-masking")
 
+# --- 事前に文ベクトルを計算（重いのでキャッシュ） ---
+@st.cache_resource
+def compute_embeddings(texts):
+    return model.encode(texts, convert_to_tensor=True)
+
+embeddings = compute_embeddings(df["description"].tolist())
+
+# --- ユーザー入力（検索クエリ） ---
+query = st.text_input("どんな場所を探していますか？（例：子連れ カフェ）")
 if query:
-    # 類似度計算
-    vec = TfidfVectorizer()
-    tfidf_matrix = vec.fit_transform(df["description"].fillna(""))
-    query_vec = vec.transform([query])
-    sims = cosine_similarity(query_vec, tfidf_matrix)[0]
-    df["similarity"] = sims
+    query_embedding = model.encode(query, convert_to_tensor=True)
+    similarities = util.pytorch_cos_sim(query_embedding, embeddings)[0].cpu().numpy()
+    df["similarity"] = similarities
     results = df.sort_values("similarity", ascending=False).head(5)
 else:
     results = df.head(5)
 
-# 表示（カード＋リンク）
+# --- 検索結果表示（カード形式） ---
 st.subheader("おすすめスポット")
 for _, row in results.iterrows():
     st.markdown(f"""
@@ -33,7 +39,7 @@ for _, row in results.iterrows():
     </div>
     """, unsafe_allow_html=True)
 
-# 地図で表示
+# --- 地図表示 ---
 st.subheader("地図で表示")
 m = folium.Map(location=[34.7, 137.85], zoom_start=12)
 for _, row in results.iterrows():
