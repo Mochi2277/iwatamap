@@ -1,6 +1,7 @@
-streamlit
+streamlit==1.45.1
 pandas
 folium
 streamlit-folium
 sentence-transformers
-torch  # sentence-transformersの依存
+torch
+scikit-learn
