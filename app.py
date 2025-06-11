@@ -23,7 +23,7 @@ if query:
     df["similarity"] = similarities
     results = df.sort_values("similarity", ascending=False).head(5)
 else:
-    results = df.head(5)
+    results = df.head(6)
 
 # --- カード型の横並びレイアウト（HTML） ---
 html_content = """
