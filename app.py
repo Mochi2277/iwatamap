@@ -32,6 +32,8 @@ if query:
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
+        justify-content: flex-start;
+        margin-top: 20px;
     }
     .card {
         flex: 1 1 calc(33.333% - 20px);
@@ -41,6 +43,7 @@ if query:
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
         border: 1px solid #ccc;
         color: #000000; /* ← ここが重要！文字色を黒に */
+        max-width: 300px;
     }
     @media (max-width: 768px) {
         .card {
