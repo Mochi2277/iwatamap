@@ -2,103 +2,75 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>磐田市おすすめスポットマップ</title>
   <style>
-    #map {
-      height: 600px;
-      width: 100%;
+    body {
+      font-family: sans-serif;
+      margin: 20px;
     }
-    .search-bar {
-      margin-bottom: 10px;
+    h1, h2 {
+      color: #2c3e50;
     }
-    .card {
+    .spot-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
+      justify-content: space-between;
+    }
+    .spot-card {
       border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
+      padding: 16px;
       background-color: #f9f9f9;
+      width: 300px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      flex: 1 1 calc(33.333% - 20px);
+    }
+    .spot-card h4 {
+      margin-top: 0;
+    }
+    @media (max-width: 768px) {
+      .spot-card {
+        flex: 1 1 100%;
+      }
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
     }
   </style>
 </head>
 <body>
-  <h2>磐田市おすすめスポットマップ</h2>
+  <h1>磐田市おすすめスポットマップ</h1>
 
-  <input type="text" id="query" class="search-bar" placeholder="例：子どもと楽しめるカフェ">
-  <button onclick="searchSpots()">検索</button>
+  <h2>おすすめスポット</h2>
+  <div class="spot-container" id="spot-list"></div>
 
-  <div id="results"></div>
-  <div id="map"></div>
+  <h2>Googleマイマップ</h2>
+  <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1IhaKYfz5dvbJgV7VPcCjjM7rDchV9tE&ehbc=2E312F"></iframe>
 
-  <!-- Google Maps API -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp2CHiYA0YHKfQv0tRQ1CILyWy_s4QdEI&callback=initMap" async defer></script>
-
-  <!-- アプリケーションロジック -->
   <script>
-    let map;
-    let markers = [];
-    let spots = [];
+    fetch("data.json")
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("spot-list");
 
-    async function initMap() {
-      const response = await fetch("data.json");
-      spots = await response.json();
-
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 34.7, lng: 137.85 },
-        zoom: 12
-      });
-
-      displaySpots(spots.slice(0, 5));
-    }
-
-    function displaySpots(filtered) {
-      // マーカー削除
-      markers.forEach(marker => marker.setMap(null));
-      markers = [];
-
-      // HTML結果を初期化
-      const resultDiv = document.getElementById("results");
-      resultDiv.innerHTML = "";
-
-      filtered.forEach(spot => {
-        // マーカー
-        const marker = new google.maps.Marker({
-          position: { lat: spot.geometry_lat, lng: spot.geometry_lng },
-          map,
-          title: spot.place_name
-        });
-
-        const infoWindow = new google.maps.InfoWindow({
-          content: `<strong>${spot.place_name}</strong><br>${spot.description}`
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-
-        markers.push(marker);
-
-        // HTMLカード出力
-        const card = `
-          <div class="card">
+        data.slice(0, 5).forEach(spot => {
+          const card = document.createElement("div");
+          card.className = "spot-card";
+          card.innerHTML = `
             <h4>${spot.place_name}</h4>
             <p><strong>評価:</strong> ⭐️ ${spot.rating}（${spot.user_ratings_total}件）</p>
-            <p>${spot.description}</p>
+            <p><strong>説明:</strong> ${spot.description}</p>
             <p><strong>住所:</strong> ${spot.formatted_address}</p>
             <a href="${spot.google_map_url}" target="_blank">📍 Googleマップで開く</a>
-          </div>`;
-        resultDiv.insertAdjacentHTML("beforeend", card);
+          `;
+          container.appendChild(card);
+        });
       });
-
-      if (filtered.length > 0) {
-        map.setCenter({ lat: filtered[0].geometry_lat, lng: filtered[0].geometry_lng });
-      }
-    }
-
-    function searchSpots() {
-      const query = document.getElementById("query").value.toLowerCase();
-      const filtered = spots.filter(s => s.description && s.description.toLowerCase().includes(query));
-      displaySpots(filtered.slice(0, 5));
-    }
   </script>
 </body>
 </html>
