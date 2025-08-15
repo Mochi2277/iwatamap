@@ -1,0 +1,28 @@
+name: Ping Hugging Face Space (12h)
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"   # 12時間おき（UTC基準）
+  workflow_dispatch:         # 手動実行ボタン
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Space
+        env:
+          # ← ここをあなたのSpaceに変更
+          SPACE_URL: "https://huggingface.co/spaces/Mochi2277/iwatamap"
+        run: |
+          echo "Pinging: $SPACE_URL"
+          # 軽量なHEADリクエスト。失敗時はリトライ。
+          for i in 1 2 3; do
+            if curl -I --fail --silent --show-error --max-time 20 "$SPACE_URL"; then
+              echo "Success on attempt $i"
+              exit 0
+            fi
+            echo "Attempt $i failed. Retrying in 10s..."
+            sleep 10
+          done
+          echo "All attempts failed"
+          exit 1
