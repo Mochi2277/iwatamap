@@ -1,9 +1,9 @@
-name: Ping Hugging Face Space (12h)
+name: Ping Hugging Face Space (hourly)
 
 on:
   schedule:
-    - cron: "0 */12 * * *"   # 12時間おき（UTC基準）
-  workflow_dispatch:         # 手動実行ボタン
+    - cron: "0 * * * *"   # 毎時
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -11,13 +11,11 @@ jobs:
     steps:
       - name: Ping Space
         env:
-          # ← ここをあなたのSpaceに変更
           SPACE_URL: "https://huggingface.co/spaces/Mochi2277/iwatamap"
         run: |
           echo "Pinging: $SPACE_URL"
-          # 軽量なHEADリクエスト。失敗時はリトライ。
           for i in 1 2 3; do
-            if curl -I --fail --silent --show-error --max-time 20 "$SPACE_URL"; then
+            if curl -L --fail --silent --show-error --max-time 30 "$SPACE_URL" > /dev/null; then
               echo "Success on attempt $i"
               exit 0
             fi
