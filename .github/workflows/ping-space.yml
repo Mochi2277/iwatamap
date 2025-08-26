@@ -2,7 +2,7 @@ name: Ping Hugging Face Space (hourly)
 
 on:
   schedule:
-    - cron: "0 * * * *"   # 毎時
+    - cron: "0 */6 * * *" # 12時間おき（UTC基準）
   workflow_dispatch:
 
 jobs:
