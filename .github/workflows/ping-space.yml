@@ -1,26 +1,22 @@
-name: Ping Hugging Face Space (hourly)
+name: Ping Hugging Face Space (6h)
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # 12時間おき（UTC基準）
+    - cron: "0 */6 * * *"   # 6時間おき
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Space
+      - name: Dummy predict request
         env:
-          SPACE_URL: "https://huggingface.co/spaces/Mochi2277/iwatamap"
+          SPACE_URL: "https://mochi2277-iwatamap.hf.space"
         run: |
-          echo "Pinging: $SPACE_URL"
-          for i in 1 2 3; do
-            if curl -L --fail --silent --show-error --max-time 30 "$SPACE_URL" > /dev/null; then
-              echo "Success on attempt $i"
-              exit 0
-            fi
-            echo "Attempt $i failed. Retrying in 10s..."
-            sleep 10
-          done
-          echo "All attempts failed"
-          exit 1
+          echo "Sending dummy predict to: $SPACE_URL"
+          curl -X POST "$SPACE_URL/run/predict" \
+               -H "Content-Type: application/json" \
+               -H "User-Agent: Mozilla/5.0" \
+               -d '{"data": ["ping"]}' \
+               --fail --silent --show-error --max-time 60 > /dev/null
+          echo "✅ Dummy request done"
