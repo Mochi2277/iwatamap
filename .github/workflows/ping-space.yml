@@ -9,14 +9,13 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Dummy predict request
+      - name: Browser-like GET request
         env:
           SPACE_URL: "https://mochi2277-iwatamap.hf.space"
         run: |
-          echo "Sending dummy predict to: $SPACE_URL"
-          curl -X POST "$SPACE_URL/run/predict" \
-               -H "Content-Type: application/json" \
-               -H "User-Agent: Mozilla/5.0" \
-               -d '{"data": ["ping"]}' \
-               --fail --silent --show-error --max-time 60 > /dev/null
-          echo "✅ Dummy request done"
+          echo "Pinging (as browser): $SPACE_URL"
+          curl -L \
+               -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64)" \
+               --fail --silent --show-error --max-time 60 \
+               "$SPACE_URL" > /dev/null
+          echo "✅ Request done"
